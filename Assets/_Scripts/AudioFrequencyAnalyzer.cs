@@ -4,6 +4,61 @@ using System;
 
 public static class AudioAnalyzer
 {
+    
+    public static float EstimateBPM(AudioClip audioClip)
+    {
+        int sampleRate = audioClip.frequency;
+        float[] samples = new float[audioClip.samples * audioClip.channels];
+        audioClip.GetData(samples, 0);
+
+        int windowSize = Mathf.FloorToInt(sampleRate * sampleWindow);
+        List<float> energies = new List<float>();
+    
+        // 1. Calculate energy per window
+        for (int i = 0; i < samples.Length - windowSize; i += windowSize)
+        {
+            float sum = 0f;
+            for (int j = 0; j < windowSize; j++)
+            {
+                float sample = samples[i + j];
+                sum += sample * sample;
+            }
+            energies.Add(sum);
+        }
+
+        // 2. Auto-correlate the energy signal
+        int maxLag = Mathf.FloorToInt(energies.Count / 2f);
+        float bestLag = 0;
+        float bestCorrelation = 0;
+
+        for (int lag = 20; lag < maxLag; lag++) // skip very small lags
+        {
+            float correlation = 0;
+            for (int i = 0; i < energies.Count - lag; i++)
+            {
+                correlation += energies[i] * energies[i + lag];
+            }
+
+            if (correlation > bestCorrelation)
+            {
+                bestCorrelation = correlation;
+                bestLag = lag;
+            }
+        }
+
+        if (bestLag > 0)
+        {
+            float secondsPerBeat = sampleWindow * bestLag;
+            float bpm = 60f / secondsPerBeat;
+            Debug.Log($"Estimated BPM: {bpm}");
+            return bpm;
+        }
+
+        Debug.LogWarning("Could not estimate BPM.");
+        return 120f; // fallback
+    }
+    
+    
     public struct NoteInfo
     {
         public float frequency;   // Frequency in Hz
@@ -32,10 +87,13 @@ public static class AudioAnalyzer
         "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
     };
 
-    static float sampleWindow = 0.02f; // Duration of each chunk in seconds
+    static float sampleWindow = 0.5f; // Duration of each chunk in seconds
 
     public static List<NoteInfo> ExtractNotesFromAudio(AudioClip audioClip, float lengthToExtract = 1.0f, float sensitivity = 0.1f, float minVolume = 0.05f)
     {
+        
+        //float bpm = EstimateBPM(audioClip);
+        
         int sampleRate = audioClip.frequency;
         List<NoteInfo> notes = new List<NoteInfo>();
         float[] samples = new float[audioClip.samples * audioClip.channels];

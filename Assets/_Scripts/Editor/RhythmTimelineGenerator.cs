@@ -63,6 +63,7 @@ public class RhythmTimelineEditorWindow : EditorWindow
     
     private void GenerateTimeline(AudioClip audioClip, int laneCount, float minVolume, float lengthToExecute)
     {
+        AssetDatabase.Refresh();
         // Step 1: Analyze the audio clip to extract notes
         var notesFromAudio = AudioAnalyzer.ExtractNotesWithDuration(audioClip, lengthToExecute);
         
