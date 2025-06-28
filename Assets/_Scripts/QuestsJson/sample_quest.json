@@ -1,0 +1,22 @@
+﻿[
+  {
+    "questId": "Q001",
+    "title": "Hunt the Wolves",
+    "description": "Wolves are attacking travelers near the forest. Kill them.",
+    "goalType": "KillEnemies",
+    "enemyType": "Wolf",
+    "amount": 5,
+    "rewardXP": 100,
+    "rewardItem": "Wolf Pelt"
+  },
+  {
+    "questId": "Q002",
+    "title": "Gather Herbs",
+    "description": "The healer needs healing herbs for the sick.",
+    "goalType": "CollectItems",
+    "itemType": "Healing Herb",
+    "amount": 10,
+    "rewardXP": 80,
+    "rewardItem": "Healer's Blessing"
+  }
+]
