@@ -2,5 +2,7 @@
 {
     KillEnemies,
     CollectItems,
-    GoToLocation
+    GoToLocation,
+    ProtectTarget,
+    SabotageObjective
 }

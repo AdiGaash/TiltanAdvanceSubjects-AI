@@ -1,0 +1,12 @@
+﻿[
+  {
+    "questId": "Q001",
+    "title": "Hunt a Monster",
+    "description": "Find and slay a wild beast.",
+    "goalType": "KillEnemies",
+    "enemyType": "@enemy",
+    "amount": 3,
+    "rewardXP": 120,
+    "rewardItem": "@item"
+  }
+]
