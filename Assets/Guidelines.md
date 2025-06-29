@@ -29,4 +29,9 @@
 - Implement proper cleanup in OnDestroy() when necessary
 - Follow Unity's event functions order (Awake, Start, Update, etc.)
 
-## Example Script Structure
+## Code Style Guidelines
+
+### Function Length
+- Functions should not exceed 10 lines of code.
+- This promotes better readability and maintainability.
+- Complex operations should be broken down into smaller, well-named functions.

@@ -184,7 +184,5 @@ public class RhythmTimelineEditorWindow : EditorWindow
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log($"Timeline created and saved to {timelinePath}");
-        
-        
     }
 }
