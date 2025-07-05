@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+// old concept not needed for class
 public class CorridorGenerator
 {
     // Create corridors between rooms in a BSP tree
@@ -19,7 +19,7 @@ public class CorridorGenerator
         }
     }
 
-    private void CreateLShapedCorridor(Vector2Int start, Vector2Int end, GameObject prefab, int floor)
+    public void CreateLShapedCorridor(Vector2Int start, Vector2Int end, GameObject prefab, int floor)
     {
         float floorHeight = floor * 5f;
         

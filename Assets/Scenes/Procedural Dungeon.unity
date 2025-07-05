@@ -128,7 +128,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1011414415}
-  - component: {fileID: 1011414414}
+  - component: {fileID: 1011414416}
   m_Layer: 0
   m_Name: BSP
   m_TagString: Untagged
@@ -136,31 +136,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1011414414
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1011414413}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08b242531d0d7e743be956e85f073e01, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mapWidth: 50
-  mapHeight: 50
-  maxDepth: 3
-  minLeafSize: 10
-  roomPrefab: {fileID: 668597961085715799, guid: 37c91e6721b6ea14d80597096a55fbd8, type: 3}
-  corridorPrefab: {fileID: 668597961085715799, guid: 9e3c6b27f466b4e4daade2f9cab0b7da, type: 3}
-  minRoomWidth: 4
-  minRoomHeight: 4
-  maxRoomWidth: 10
-  maxRoomHeight: 10
-  numberOfFloors: 1
-  stairPrefab: {fileID: 0}
-  showGizmos: 1
 --- !u!4 &1011414415
 Transform:
   m_ObjectHideFlags: 0
@@ -176,6 +151,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1011414416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1011414413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 900d24e42f668da4e958a73a7a30f2a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mapWidth: 50
+  mapHeight: 50
+  maxDepth: 4
+  minLeafSize: 10
+  roomPrefab: {fileID: 668597961085715799, guid: 37c91e6721b6ea14d80597096a55fbd8, type: 3}
+  minRoomWidth: 4
+  minRoomHeight: 4
+  maxRoomWidth: 12
+  maxRoomHeight: 12
+  showGizmos: 1
 --- !u!1 &1259342244
 GameObject:
   m_ObjectHideFlags: 0
