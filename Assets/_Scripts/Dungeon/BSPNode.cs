@@ -37,7 +37,7 @@ public class BSPNode
 
         bool splitHorizontally;
 
-        // Decide split direction based on current aspect ratio
+        // Decide split direction based on current aspect ratio - this can be changed
         if (area.width / (float)area.height >= 1.25f)
             splitHorizontally = false;
         else if (area.height / (float)area.width >= 1.25f)

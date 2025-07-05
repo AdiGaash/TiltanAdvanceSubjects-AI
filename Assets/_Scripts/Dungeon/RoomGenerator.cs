@@ -258,4 +258,9 @@ public class RoomGenerator : MonoBehaviour
     {
         return rootNode;
     }
+
+    public RectInt GetGenerationArea()
+    {
+        return new RectInt(0, 0, mapWidth, mapHeight);
+    }
 }
