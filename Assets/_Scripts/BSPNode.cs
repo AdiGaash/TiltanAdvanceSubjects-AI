@@ -7,34 +7,63 @@ public class BSPNode
     public BSPNode left;
     public BSPNode right;
     public RectInt room;
+    public int depth; // Track the depth of each node
+    
+    private static readonly Color[] depthColors = new Color[]
+    {
+        new Color(1, 0, 0, 0.3f),     // Red (depth 0)
+        new Color(0, 1, 0, 0.3f),     // Green (depth 1)
+        new Color(0, 0, 1, 0.3f),     // Blue (depth 2)
+        new Color(1, 1, 0, 0.3f),     // Yellow (depth 3)
+        new Color(1, 0, 1, 0.3f),     // Magenta (depth 4)
+        new Color(0, 1, 1, 0.3f),     // Cyan (depth 5)
+        new Color(1, 0.5f, 0, 0.3f),  // Orange (depth 6)
+        new Color(0.5f, 0, 1, 0.3f)   // Purple (depth 7)
+    };
 
-    public BSPNode(int x, int y, int width, int height)
+    public BSPNode(int x, int y, int width, int height, int depth = 0)
     {
         area = new RectInt(x, y, width, height);
+        this.depth = depth;
     }
 
-    public void Split(int depth)
+    public void Split(int depth, int minLeafSize)
     {
         if (depth <= 0) return;
 
-        bool splitHorizontally = Random.value > 0.5f;
-        int splitPos = splitHorizontally
-            ? Random.Range(5, area.height - 5)
-            : Random.Range(5, area.width - 5);
+        // Prevent splitting if this leaf is too small
+        if (area.width < minLeafSize * 2 && area.height < minLeafSize * 2)
+            return;
+
+        bool splitHorizontally;
+
+        // Decide split direction based on current aspect ratio
+        if (area.width / (float)area.height >= 1.25f)
+            splitHorizontally = false;
+        else if (area.height / (float)area.width >= 1.25f)
+            splitHorizontally = true;
+        else
+            splitHorizontally = Random.value > 0.5f;
+
+        int maxSplit = (splitHorizontally ? area.height : area.width) - minLeafSize;
+        if (maxSplit <= minLeafSize)
+            return; // Too small to split
+
+        int splitPos = Random.Range(minLeafSize, maxSplit);
 
         if (splitHorizontally)
         {
-            left = new BSPNode(area.x, area.y, area.width, splitPos);
-            right = new BSPNode(area.x, area.y + splitPos, area.width, area.height - splitPos);
+            left = new BSPNode(area.x, area.y, area.width, splitPos, this.depth + 1);
+            right = new BSPNode(area.x, area.y + splitPos, area.width, area.height - splitPos, this.depth + 1);
         }
         else
         {
-            left = new BSPNode(area.x, area.y, splitPos, area.height);
-            right = new BSPNode(area.x + splitPos, area.y, area.width - splitPos, area.height);
+            left = new BSPNode(area.x, area.y, splitPos, area.height, this.depth + 1);
+            right = new BSPNode(area.x + splitPos, area.y, area.width - splitPos, area.height, this.depth + 1);
         }
 
-        left.Split(depth - 1);
-        right.Split(depth - 1);
+        left.Split(depth - 1, minLeafSize);
+        right.Split(depth - 1, minLeafSize);
     }
 
     public List<BSPNode> GetLeafNodes()
@@ -49,54 +78,36 @@ public class BSPNode
         }
         return leaves;
     }
-
     
-    
-    public void CreateRoom(GameObject prefab, int floor, Transform parent)
+    // Room creation method
+    public RoomInfo CreateRoom(GameObject prefab, int floor, int minWidth, int minHeight, int maxWidth, int maxHeight)
     {
         int padding = 2; // Ensures room is not too close to the leaf edges
 
-        int maxRoomWidth = area.width - padding * 2;
-        int maxRoomHeight = area.height - padding * 2;
+        // Calculate maximum possible room size within this node (considering padding)
+        int maxPossibleWidth = Mathf.Min(area.width - padding * 2, maxWidth);
+        int maxPossibleHeight = Mathf.Min(area.height - padding * 2, maxHeight);
 
-        // Ensure minimum room size
-        if (maxRoomWidth < 4 || maxRoomHeight < 4)
-            return;
+        // Ensure minimum room size is possible
+        if (maxPossibleWidth < minWidth || maxPossibleHeight < minHeight)
+            return null;
 
-        int roomWidth = Random.Range(4, maxRoomWidth);
-        int roomHeight = Random.Range(4, maxRoomHeight);
+        // Generate room dimensions within the constraints
+        int roomWidth = Random.Range(minWidth, maxPossibleWidth + 1);
+        int roomHeight = Random.Range(minHeight, maxPossibleHeight + 1);
 
-        int roomX = area.x + Random.Range(padding, area.width - roomWidth - padding);
-        int roomY = area.y + Random.Range(padding, area.height - roomHeight - padding);
+        // Position the room within the node area (with padding)
+        int roomX = area.x + Random.Range(padding, area.width - roomWidth - padding + 1);
+        int roomY = area.y + Random.Range(padding, area.height - roomHeight - padding + 1);
 
         room = new RectInt(roomX, roomY, roomWidth, roomHeight);
 
         Vector3 pos = new Vector3(room.x + room.width / 2, floor * 5f, room.y + room.height / 2);
         GameObject newRoom = GameObject.Instantiate(prefab, pos, Quaternion.identity);
         newRoom.transform.localScale = new Vector3(room.width, 1, room.height);
-        newRoom.transform.SetParent(parent);
-    }
-
-    public void CreateCorridors(GameObject prefab, int floor, Transform parent)
-    {
-        if (left != null && right != null)
-        {
-            Vector2Int leftCenter = left.GetRoomCenter();
-            Vector2Int rightCenter = right.GetRoomCenter();
-
-            Vector3 startPos = new Vector3(leftCenter.x, floor * 5f, leftCenter.y);
-            Vector3 endPos = new Vector3(rightCenter.x, floor * 5f, rightCenter.y);
-
-            Vector3 corridorPos = (startPos + endPos) / 2;
-            float corridorLength = Vector3.Distance(startPos, endPos);
-
-            GameObject corridor = GameObject.Instantiate(prefab, corridorPos, Quaternion.identity);
-            corridor.transform.localScale = new Vector3(1, 1, corridorLength);
-            corridor.transform.SetParent(parent);
-            
-            left.CreateCorridors(prefab, floor, parent);
-            right.CreateCorridors(prefab, floor, parent);
-        }
+        
+        // Return both the GameObject and RectInt information
+        return new RoomInfo(newRoom, room);
     }
 
     public Vector2Int GetRoomCenter()
@@ -105,5 +116,36 @@ public class BSPNode
             return new Vector2Int(room.x + room.width / 2, room.y + room.height / 2);
         else
             return new Vector2Int(area.x + area.width / 2, area.y + area.height / 2);
+    }
+    
+    // Draw this node's area as a gizmo
+    public void DrawGizmos(int floor = 0)
+    {
+        // Get the color for this depth (cycle through colors if we have more depths than colors)
+        Color color = depthColors[depth % depthColors.Length];
+        
+        // Set the gizmo color
+        Gizmos.color = color;
+        
+        // Calculate the world position of the area (accounting for floor height)
+        Vector3 position = new Vector3(area.x + area.width / 2f, floor * 5f, area.y + area.height / 2f);
+        Vector3 size = new Vector3(area.width, 0.1f, area.height);
+        
+        // Draw the wire cube to represent the area
+        Gizmos.DrawWireCube(position, size);
+        
+        // Draw the room if it exists
+        if (room != null)
+        {
+            // Use a slightly lighter color for the room
+            Gizmos.color = new Color(color.r, color.g, color.b, 0.5f);
+            Vector3 roomPos = new Vector3(room.x + room.width / 2f, floor * 5f, room.y + room.height / 2f);
+            Vector3 roomSize = new Vector3(room.width, 0.2f, room.height);
+            Gizmos.DrawCube(roomPos, roomSize);
+        }
+        
+        // Draw the child nodes recursively
+        if (left != null) left.DrawGizmos(floor);
+        if (right != null) right.DrawGizmos(floor);
     }
 }
