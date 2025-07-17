@@ -19,6 +19,8 @@ public class RoomGenerator : MonoBehaviour
     public int maxRoomWidth = 12;
     [Min(4)]
     public int maxRoomHeight = 12;
+
+    public int RandomSeed;
     
     [Header("Visualization")]
     public bool showGizmos = true;
@@ -50,7 +52,7 @@ public class RoomGenerator : MonoBehaviour
         ValidateRoomSizeParameters();
         
         // Create root node
-        rootNode = new BSPNode(0, 0, mapWidth, mapHeight);
+        rootNode = new BSPNode(0, 0, mapWidth, mapHeight, RandomSeed);
         rootNode.Split(maxDepth, minLeafSize);
 
         // Get leaf nodes and create rooms

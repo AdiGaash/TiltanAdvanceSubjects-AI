@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class BSPNode
 {
@@ -9,6 +11,8 @@ public class BSPNode
     public RectInt room;
     public int depth; // Track the depth of each node
     
+    System.Random seededRandom;
+
     private static readonly Color[] depthColors = new Color[]
     {
         new Color(1, 0, 0, 0.3f),     // Red (depth 0)
@@ -16,13 +20,15 @@ public class BSPNode
         new Color(0, 0, 1, 0.3f),     // Blue (depth 2)
         new Color(1, 1, 0, 0.3f),     // Yellow (depth 3)
         new Color(1, 0, 1, 0.3f),     // Magenta (depth 4)
+        
         new Color(0, 1, 1, 0.3f),     // Cyan (depth 5)
         new Color(1, 0.5f, 0, 0.3f),  // Orange (depth 6)
         new Color(0.5f, 0, 1, 0.3f)   // Purple (depth 7)
     };
 
-    public BSPNode(int x, int y, int width, int height, int depth = 0)
+    public BSPNode(int x, int y, int width, int height, int randomSeed = -1, int depth = 0)
     {
+        seededRandom = new System.Random(randomSeed == -1 ? Environment.TickCount : randomSeed);
         area = new RectInt(x, y, width, height);
         this.depth = depth;
     }
