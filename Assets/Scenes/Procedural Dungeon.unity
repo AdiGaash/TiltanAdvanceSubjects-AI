@@ -128,8 +128,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1011414415}
-  - component: {fileID: 1011414417}
   - component: {fileID: 1011414418}
+  - component: {fileID: 1011414419}
   m_Layer: 0
   m_Name: BSP
   m_TagString: Untagged
@@ -152,34 +152,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1011414417
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1011414413}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d78fc7c48244981b70bbc2bf2c19d1f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mapWidth: 50
-  mapHeight: 50
-  maxDepth: 4
-  minLeafSize: 10
-  roomPrefab: {fileID: 668597961085715799, guid: 37c91e6721b6ea14d80597096a55fbd8, type: 3}
-  minRoomWidth: 4
-  minRoomHeight: 4
-  maxRoomWidth: 12
-  maxRoomHeight: 12
-  RandomSeed: -1
-  showGizmos: 1
-  noiseScale: 5
-  noiseThreshold: 0.5
-  seedOffsetX: 100
-  seedOffsetY: 100
-  tileSize: 1
 --- !u!114 &1011414418
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,6 +166,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   connectionType: 0
   neighborCount: 3
+--- !u!114 &1011414419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1011414413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 900d24e42f668da4e958a73a7a30f2a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mapWidth: 50
+  mapHeight: 50
+  maxDepth: 4
+  minLeafSize: 10
+  roomPrefab: {fileID: 0}
+  minRoomWidth: 4
+  minRoomHeight: 4
+  maxRoomWidth: 12
+  maxRoomHeight: 12
+  RandomSeed: -1
+  showGizmos: 1
 --- !u!1 &1259342244
 GameObject:
   m_ObjectHideFlags: 0
