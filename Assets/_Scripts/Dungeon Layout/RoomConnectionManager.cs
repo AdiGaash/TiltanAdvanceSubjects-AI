@@ -23,7 +23,11 @@ public class RoomConnectionManager : MonoBehaviour
     private void Awake()
     {
         // Get or add the required components
-        roomGenerator = GetComponent<RoomGenerator>();
+        var roomGeneratorObj = FindObjectOfType<RoomGenerator>();
+        
+        if (roomGeneratorObj!=null && roomGeneratorObj.gameObject == gameObject)
+            roomGenerator = roomGeneratorObj;
+
         if (roomGenerator == null)
         {
             Debug.LogError("RoomConnectionManager requires a RoomGenerator component!");

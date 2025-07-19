@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class RoomGenerator : MonoBehaviour
 {
@@ -20,7 +21,9 @@ public class RoomGenerator : MonoBehaviour
     [Min(4)]
     public int maxRoomHeight = 12;
 
-    public int RandomSeed;
+    [Header("Randomness setting")]
+    public int RandomSeed = -1;
+    protected System.Random seededRandom;
     
     [Header("Visualization")]
     public bool showGizmos = true;
@@ -38,6 +41,9 @@ public class RoomGenerator : MonoBehaviour
     [ContextMenu("Generate Rooms")]
     public virtual void GenerateRooms()
     {
+        // Initialize seeded random with the seed value
+        InitializeSeededRandom();
+        
         // Clear any existing rooms
         ClearExistingRooms();
         
@@ -51,8 +57,8 @@ public class RoomGenerator : MonoBehaviour
         // Validate room size parameters
         ValidateRoomSizeParameters();
         
-        // Create root node
-        rootNode = new BSPNode(0, 0, mapWidth, mapHeight, RandomSeed);
+        // Create root node (no longer passing random seed)
+        rootNode = new BSPNode(0, 0, mapWidth, mapHeight, 0);
         rootNode.Split(maxDepth, minLeafSize);
 
         // Get leaf nodes and create rooms
@@ -63,6 +69,17 @@ public class RoomGenerator : MonoBehaviour
         
         // Call the method that will be implemented by child classes
         OnRoomsGenerated();
+    }
+    
+    protected void InitializeSeededRandom()
+    {
+        // Create a new seed if the value is -1
+        if (RandomSeed == -1)
+        {
+            RandomSeed = Environment.TickCount;
+        }
+        
+        seededRandom = new System.Random(RandomSeed);
     }
     
     protected virtual void CreateRooms()
@@ -129,6 +146,17 @@ public class RoomGenerator : MonoBehaviour
     {
         return roomInfos;
     }
+    
+    // Get the seeded random generator
+    public System.Random GetSeededRandom()
+    {
+        if (seededRandom == null)
+        {
+            InitializeSeededRandom();
+        }
+        return seededRandom;
+    }
+
     
     /// <summary>
     /// Determines optimal room connections using the BSP tree structure
