@@ -57,8 +57,8 @@ public class RoomGenerator : MonoBehaviour
         // Validate room size parameters
         ValidateRoomSizeParameters();
         
-        // Create root node (no longer passing random seed)
-        rootNode = new BSPNode(0, 0, mapWidth, mapHeight, 0);
+        // Create root node and pass the seeded random
+        rootNode = new BSPNode(0, 0, mapWidth, mapHeight, 0, seededRandom);
         rootNode.Split(maxDepth, minLeafSize);
 
         // Get leaf nodes and create rooms

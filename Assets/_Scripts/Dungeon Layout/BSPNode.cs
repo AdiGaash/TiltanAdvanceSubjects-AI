@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class BSPNode
 {
@@ -10,7 +9,8 @@ public class BSPNode
     public RectInt room;
     public int depth; // Track the depth of each node
     
-    // Removed seededRandom variable
+    // Reference to the seeded random generator
+    private System.Random seededRandom;
 
     private static readonly Color[] depthColors = new Color[]
     {
@@ -25,11 +25,11 @@ public class BSPNode
         new Color(0.5f, 0, 1, 0.3f)   // Purple (depth 7)
     };
 
-    public BSPNode(int x, int y, int width, int height, int depth = 0)
+    public BSPNode(int x, int y, int width, int height, int depth = 0, System.Random random = null)
     {
-        // Removed seededRandom initialization
         area = new RectInt(x, y, width, height);
         this.depth = depth;
+        this.seededRandom = random;
     }
 
     public void Split(int depth, int minLeafSize)
@@ -48,23 +48,25 @@ public class BSPNode
         else if (area.height / (float)area.width >= 1.25f)
             splitHorizontally = true;
         else
-            splitHorizontally = Random.value > 0.5f;
+            splitHorizontally = seededRandom != null ? seededRandom.NextDouble() > 0.5f : Random.value > 0.5f;
 
         int maxSplit = (splitHorizontally ? area.height : area.width) - minLeafSize;
         if (maxSplit <= minLeafSize)
             return; // Too small to split
 
-        int splitPos = Random.Range(minLeafSize, maxSplit);
+        int splitPos = seededRandom != null 
+            ? minLeafSize + seededRandom.Next(maxSplit - minLeafSize + 1) 
+            : Random.Range(minLeafSize, maxSplit);
 
         if (splitHorizontally)
         {
-            left = new BSPNode(area.x, area.y, area.width, splitPos, this.depth + 1);
-            right = new BSPNode(area.x, area.y + splitPos, area.width, area.height - splitPos, this.depth + 1);
+            left = new BSPNode(area.x, area.y, area.width, splitPos, this.depth + 1, seededRandom);
+            right = new BSPNode(area.x, area.y + splitPos, area.width, area.height - splitPos, this.depth + 1, seededRandom);
         }
         else
         {
-            left = new BSPNode(area.x, area.y, splitPos, area.height, this.depth + 1);
-            right = new BSPNode(area.x + splitPos, area.y, area.width - splitPos, area.height, this.depth + 1);
+            left = new BSPNode(area.x, area.y, splitPos, area.height, this.depth + 1, seededRandom);
+            right = new BSPNode(area.x + splitPos, area.y, area.width - splitPos, area.height, this.depth + 1, seededRandom);
         }
 
         left.Split(depth - 1, minLeafSize);
@@ -98,12 +100,25 @@ public class BSPNode
             return null;
 
         // Generate room dimensions within the constraints
-        int roomWidth = Random.Range(minWidth, maxPossibleWidth + 1);
-        int roomHeight = Random.Range(minHeight, maxPossibleHeight + 1);
+        int roomWidth = seededRandom != null 
+            ? minWidth + seededRandom.Next(maxPossibleWidth - minWidth + 1) 
+            : Random.Range(minWidth, maxPossibleWidth + 1);
+            
+        int roomHeight = seededRandom != null 
+            ? minHeight + seededRandom.Next(maxPossibleHeight - minHeight + 1) 
+            : Random.Range(minHeight, maxPossibleHeight + 1);
 
         // Position the room within the node area (with padding)
-        int roomX = area.x + Random.Range(padding, area.width - roomWidth - padding + 1);
-        int roomY = area.y + Random.Range(padding, area.height - roomHeight - padding + 1);
+        int maxRoomX = area.width - roomWidth - padding + 1;
+        int maxRoomY = area.height - roomHeight - padding + 1;
+        
+        int roomX = area.x + (seededRandom != null 
+            ? padding + seededRandom.Next(maxRoomX - padding + 1) 
+            : Random.Range(padding, maxRoomX + 1));
+            
+        int roomY = area.y + (seededRandom != null 
+            ? padding + seededRandom.Next(maxRoomY - padding + 1) 
+            : Random.Range(padding, maxRoomY + 1));
 
         room = new RectInt(roomX, roomY, roomWidth, roomHeight);
 

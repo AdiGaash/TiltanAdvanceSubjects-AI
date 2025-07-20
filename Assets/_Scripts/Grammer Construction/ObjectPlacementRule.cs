@@ -46,4 +46,5 @@ public class ObjectPlacementRule : IGrammarRule
     {
         throw new System.NotImplementedException();
     }
+    
 }
